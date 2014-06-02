@@ -3,7 +3,6 @@
         <title>firestorm</title>
         <script type="text/javascript" src="js/vendor/underscore.js"></script>
         <script type="text/javascript" src="js/vendor/knockout.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
         <link rel="stylesheet" href="css/font-awesome.min.css">
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
@@ -15,7 +14,26 @@
             <input type="text" />
         </div>
         <div id="settings">
-            <a href="#" class="open"><i class="fa fa-gears fa-lg fa-fw"></i></a>
+            <a href="#" class="open" data-bind="click: toggle"><i class="fa fa-gears fa-lg fa-fw"></i></a>
+            <div class="modal" data-bind="visible: visible">
+                <h2>Settings</h2>
+
+                <label>WoW Directory</label>
+                <span>Where is WoW installed?</span>
+                <input type="text" data-bind="value: wow" />
+
+                <label>FireStorm Directory</label>
+                <span>Where should FireStorm keep its files?</span>
+                <input type="text" data-bind="value: fs"/>
+
+                <label>Git Location</label>
+                <span>Where's your Git binary?</span>
+                <input type="text" data-bind="value: git"/>
+
+                <label>SVN Location</label>
+                <span>Where's your SVN binary?</span>
+                <input type="text"data-bind="value: svn" />
+            </div>
         </div>
         <div id="addons">
             <div class="all">
@@ -67,5 +85,7 @@
                 <a href="http://firestorm.williammayor.co.uk/donate/">Buy me a coffee.</a>
             </div>
         </div>
+        <script type="text/javascript" src="js/settings.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
     </body>
 </html>

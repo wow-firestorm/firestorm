@@ -226,6 +226,24 @@ dl {
     color: #333333; }
     #settings .open:hover {
       color: #2980b9; }
+  #settings .modal {
+    position: fixed;
+    top: 60px;
+    left: 40px;
+    right: 40px;
+    bottom: 79px;
+    z-index: 9999;
+    background-color: white;
+    border: 1px solid #2c3e50;
+    overflow-y: auto;
+    padding: 10px; }
+    #settings .modal label {
+      display: inline-block; }
+    #settings .modal span {
+      font-size: 0.9em;
+      float: right; }
+    #settings .modal h2, #settings .modal input {
+      margin-bottom: 20px; }
 
 #addons {
   position: absolute;
