@@ -1,0 +1,30 @@
+#footer {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+
+    font-size: $base-font-size * 0.9;
+    line-height: $base-line-height * 0.9;
+
+    background-color: #2980b9;
+    padding: 20px 10px 10px 0;
+
+    a {
+        color: $base-font-color;
+        text-decoration: underline;
+    }
+
+    .links {
+        float: left;
+
+        li {
+            display: inline-block;
+            margin: 0 10px;
+        }
+    }
+    .donate {
+        float: right;
+        text-align: right;
+    }
+}

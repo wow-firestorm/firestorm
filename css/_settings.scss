@@ -1,0 +1,14 @@
+#settings {
+    position: absolute;
+    top: 28px;
+    right: 20px;
+
+    .open {
+        display: block;
+        color: $base-font-color;
+
+        &:hover {
+            color: #2980b9;
+        }
+    }
+}

@@ -1,0 +1,42 @@
+#addons {
+    position: absolute;
+    top: 60px;
+    left: 40px;
+    right: 40px;
+    bottom: 110px;
+
+    ul {
+        border: 1px solid $base-border-color;
+        height: 100%;
+        overflow-y: auto;
+        margin-top: 5px;
+
+        li {
+            border-bottom: 1px solid $base-border-color;
+            padding: 5px;
+            background-color: #ecf0f1;
+
+            .controls {
+                display: inline-block;
+                float: right;
+            }
+        }
+    }
+
+    .all {
+        text-align: right;
+        padding-right: 10px;
+    }
+
+    .button {
+        color: $base-font-color;
+
+        &:hover {
+            color: #2980b9;
+        }
+
+        &.delete:hover {
+            color: #c0392b;
+        }
+    }
+}

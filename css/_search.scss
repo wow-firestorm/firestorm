@@ -1,0 +1,29 @@
+#search {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    right: 60px;
+
+    .go {
+        display: inline-block;
+        padding: 9.5px ($base-line-height / 3);
+        border-bottom-left-radius: $form-border-radius;
+        border-top-left-radius: $form-border-radius;
+        border: 1px solid $form-border-color;
+        background-color: #bdc3c7;
+        color: $base-font-color;
+        position: relative;
+        bottom: 1px;
+
+        &:hover {
+            background-color: #95a5a6;
+        }
+    }
+    input {
+        display: inline-block;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        width: 500px;
+        margin-left: -5px;
+    }
+}
