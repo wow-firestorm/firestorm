@@ -15,15 +15,56 @@
         position: relative;
         bottom: 1px;
 
-        &:hover {
+        &[href="#"]:hover {
             background-color: #95a5a6;
         }
     }
-    input {
-        display: inline-block;
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
-        width: 500px;
-        margin-left: -5px;
+    form {
+        display: inline;
+
+        input {
+            display: inline-block;
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+            width: 500px;
+            margin-left: -5px;
+        }
+    }
+    .results {
+        position: absolute;
+        top: 34px;
+        left: 0px;
+        right: 2px;
+        z-index: 9999;
+        border: 1px solid $form-border-color;
+        background-color: $base-body-color;
+        max-height: 300px;
+        overflow-y: auto;
+
+        li {
+            padding: 5px 10px;
+            border-bottom: 1px solid $form-border-color;
+
+            .icon {
+                float: right;
+                margin-top: 5px;
+            }
+
+            a.icon {
+                color: $base-font-color;
+                &:hover {
+                    color: #2980b9;
+                }
+            }
+
+            &:last-child {
+                border-bottom: 0;
+                background-color: yellow;
+            }
+
+            &.error {
+                text-align: center;
+            }
+        }
     }
 }

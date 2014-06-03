@@ -54,3 +54,4 @@ docs/_build/
 
 
 css/.sass-cache/
+node_modules/
