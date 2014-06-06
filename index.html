@@ -1,8 +1,8 @@
 <html>
     <head>
         <title>firestorm</title>
-        <script type="text/javascript" src="js/vendor/underscore.js"></script>
-        <script type="text/javascript" src="js/vendor/knockout.js"></script>
+        <script type="text/javascript" src="js/vendor/knockout-3.1.0.js"></script>
+        <script type="text/javascript" src="js/vendor/underscore-min.js"></script>
         <link rel="stylesheet" href="css/font-awesome.min.css">
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
@@ -17,27 +17,29 @@
                                  class: (busy()) ? 'fa fa-lg fa-fw fa-spinner fa-spin' : 'fa fa-lg fa-fw fa-search'
                              }"></i>
             </a>
-            <form data-bind="submit: search"><input type="text" data-bind="value: query" /></form>
-            <ul class="results" data-bind="visible: results().length > 0 || error()">
+            <form data-bind="submit: search">
+                <input type="text" data-bind="value: query" />
+            </form>
+            <ul class="results"
+                data-bind="visible: results().length > 0 || error()">
                 <!-- ko foreach: results -->
                 <li>
                     <a href="#" class="name" data-bind="text: name"></a>
                     <a href="#" class="icon button download"
-                       data-bind="visible: !busy">
+                       data-bind="visible: !busy(),
+                                  click: $root.download">
                         <i class="fa fa-download fa-lg fa-fw"></i>
                     </a>
                     <i class="icon fa fa-spinner fa-spin fa-lg fa-fw"
                        data-bind="visible: busy"></i>
+                    <a href="#" class="icon button error"
+                       data-bind="visible: error">
+                        <i class="fa fa-exclamation-circle fa-lg fa-fw"></i>
+                    </a>
                 </li>
                 <!-- /ko -->
                 <li class="error" data-bind="visible: error() === 400">
                     -- Cannot download --
-                </li>
-                <li class="error" data-bind="visible: error() === 404">
-                    -- Unrecognised URL --
-                </li>
-                <li class="error" data-bind="visible: error() === 415">
-                    -- Unknown file type --
                 </li>
             </ul>
         </div>
@@ -115,6 +117,7 @@
         </div>
         <script type="text/javascript" src="js/settings.js"></script>
         <script type="text/javascript" src="js/search.js"></script>
+        <script type="text/javascript" src="js/addons.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
     </body>
 </html>

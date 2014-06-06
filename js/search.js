@@ -1,3 +1,5 @@
+var mkdirp = require('mkdirp');
+var path = require('path');
 var exec = require('child_process').exec;
 var request = require('request');
 var parse_url = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
@@ -10,6 +12,13 @@ function SearchViewModel(g) {
     self.query = ko.observable();
     self.results = ko.observableArray();
 
+    self.clear = function() {
+        self.query("");
+        self.results([]);
+        self.error(null);
+        self.busy(false);
+    };
+
     self.probe_git = function(url, callback) {
         var cmd = g.settings.git() + " ls-remote " + url + " HEAD";
         exec(cmd, function(error, stdout, stderr) {
@@ -20,9 +29,9 @@ function SearchViewModel(g) {
                 });
             } else {
                 var name = parse_url.exec(url)[5].split('/').pop();
-                console.log(name);
                 callback({
                     type: 'git',
+                    download: self.download_git,
                     name: name,
                     git: stdout
                 });
@@ -56,10 +65,51 @@ function SearchViewModel(g) {
         self.probe_git(url, callback);
     };
 
-    self.download = function(url, callback) {
-        request.get(url, function(error, response, body) {
-            console.log(response);
-            callback();
+    self.download_git = function(details, callback) {
+        var cmd = g.settings.git() + " clone " + details.url;
+        var options = {cwd: path.join(g.settings.fs(), 'addons')};
+        mkdirp(options.cwd, function(err) {
+            if (err) {
+                details.error(true);
+            }
+            else {
+                exec(cmd, options, function(error, stdout, stderr) {
+                    if (error) {
+                        details.error(true);
+                    } else {
+                        var p = path.join(
+                            g.settings.fs(),
+                            'addons',
+                            details.name.replace(".git", "")
+                        );
+                        callback({
+                            path: p,
+                            type: 'git'
+                        });
+                    }
+                });
+            }
+        });
+    };
+
+    self.download_svn = function(details, callback) {
+
+    };
+
+    self.download_file = function(details, callback) {
+
+    };
+
+    self.download = function(details) {
+        details.busy(true);
+        details.download(details, function(details) {
+            self.clear();
+            g.db.repos.push({
+                path: details.path,
+                type: details.type,
+                last_modified: details.last_modified
+            });
+            g.addons.reload();
         });
     };
 
@@ -73,8 +123,10 @@ function SearchViewModel(g) {
                 self.results.push({
                     name: details.name,
                     type: details.type,
+                    download: details.download,
                     url: q,
-                    busy: false
+                    busy: ko.observable(false),
+                    error: ko.observable(false)
                 });
             } else {
                 self.error(400);

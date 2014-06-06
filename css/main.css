@@ -238,9 +238,6 @@ dl {
         color: #333333; }
         #search .results li a.icon:hover {
           color: #2980b9; }
-      #search .results li:last-child {
-        border-bottom: 0;
-        background-color: yellow; }
       #search .results li.error {
         text-align: center; }
 

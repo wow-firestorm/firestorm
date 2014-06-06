@@ -2,7 +2,7 @@
   "name": "firestorm",
   "main": "index.html",
   "window": {
-    "toolbar": true,
+    "toolbar": false,
     "resizable": true,
     "width": 625,
     "height": 500,
