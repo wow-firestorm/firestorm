@@ -1,6 +1,6 @@
 #addons {
     position: absolute;
-    top: 60px;
+    top: 100px;
     left: 40px;
     right: 40px;
     bottom: 110px;
@@ -19,6 +19,9 @@
             .controls {
                 display: inline-block;
                 float: right;
+                .fa-spin {
+                    margin-top: 5px;
+                }
             }
         }
     }

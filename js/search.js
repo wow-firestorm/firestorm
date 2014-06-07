@@ -6,132 +6,82 @@ var parse_url = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^
 
 function SearchViewModel(g) {
     var self = this;
+    self.g = g;
 
     self.error = ko.observable();
     self.busy = ko.observable(false);
     self.query = ko.observable();
     self.results = ko.observableArray();
+    self.focus = ko.observable(true);
+    self.show = ko.observable(false);
+
+    self.focus.subscribe(function(value) {
+        self.show(value && self.results().length > 0);
+    });
 
     self.clear = function() {
         self.query("");
         self.results([]);
-        self.error(null);
         self.busy(false);
+        self.show(false);
     };
 
-    self.probe_git = function(url, callback) {
+    self.probe_git = function(url, discovered, done) {
         var cmd = g.settings.git() + " ls-remote " + url + " HEAD";
         exec(cmd, function(error, stdout, stderr) {
             if (error) {
-                self.probe_svn(url, function(details) {
-                    details.git = stderr;
-                    callback(details);
-                });
+                self.probe_svn(url, discovered, done);
             } else {
                 var name = parse_url.exec(url)[5].split('/').pop();
-                callback({
+                discovered({
                     type: 'git',
-                    download: self.download_git,
                     name: name,
-                    git: stdout
+                    url: url,
+                    output: stdout
                 });
+                done();
             }
         });
     };
 
-    self.probe_svn = function(url, callback) {
-        self.probe_file(url, function(details) {
-            details.svn = "Not svn";
-            callback(details);
-        });
+    self.probe_svn = function(url, discovered, done) {
+        self.probe_file(url, discovered, done);
     };
 
-    self.probe_file = function(url, callback) {
-        request.head(url, function(error, response) {
-            if (error) {
-                self.probe_unknown(url, function(details) {
-                    details.file = error.message;
-                    callback(details);
-                });
-            }
-        });
+    self.probe_file = function(url, discovered, done) {
+        done();
     };
 
-    self.probe_unknown = function(url, callback) {
-        callback({error: 400});
-    };
-
-    self.probe = function(url, callback) {
-        self.probe_git(url, callback);
-    };
-
-    self.download_git = function(details, callback) {
-        var cmd = g.settings.git() + " clone " + details.url;
-        var options = {cwd: path.join(g.settings.fs(), 'addons')};
-        mkdirp(options.cwd, function(err) {
-            if (err) {
-                details.error(true);
-            }
-            else {
-                exec(cmd, options, function(error, stdout, stderr) {
-                    if (error) {
-                        details.error(true);
-                    } else {
-                        var p = path.join(
-                            g.settings.fs(),
-                            'addons',
-                            details.name.replace(".git", "")
-                        );
-                        callback({
-                            path: p,
-                            type: 'git'
-                        });
-                    }
-                });
-            }
-        });
-    };
-
-    self.download_svn = function(details, callback) {
-
-    };
-
-    self.download_file = function(details, callback) {
-
-    };
-
-    self.download = function(details) {
-        details.busy(true);
-        details.download(details, function(details) {
-            self.clear();
-            g.db.repos.push({
-                path: details.path,
-                type: details.type,
-                last_modified: details.last_modified
-            });
-            g.addons.reload();
-        });
+    self.probe = function(url, discovered, done) {
+        self.probe_git(url, discovered, done);
     };
 
     self.search = function() {
         self.busy(true);
         self.results([]);
-        self.error(null);
         var q = self.query();
         self.probe(q, function(details) {
-            if (details.type) {
-                self.results.push({
-                    name: details.name,
-                    type: details.type,
-                    download: details.download,
-                    url: q,
-                    busy: ko.observable(false),
-                    error: ko.observable(false)
-                });
-            } else {
-                self.error(400);
-            }
+            self.results.push({
+                name: details.name,
+                type: details.type,
+                url: details.url
+            });
+            self.show(true);
+        }, function() {
             self.busy(false);
         });
+    };
+
+    self.download = function(a) {
+        self.clear();
+        self.g.addons.add_repo(a);
+        return true;
+    };
+
+    self.on_keyup = function(_, event) {
+        if (event.keyCode === 27) {
+            self.focus(false);
+            self.show(false);
+        }
     };
 }

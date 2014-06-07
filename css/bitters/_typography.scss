@@ -45,10 +45,6 @@ a {
   color: $base-link-color;
   text-decoration: none;
 
-  &:hover {
-    text-decoration: underline;
-  }
-
   &:active, &:focus {
     color: $hover-link-color;
     outline: none;

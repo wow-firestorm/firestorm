@@ -44,21 +44,23 @@
         li {
             padding: 5px 10px;
             border-bottom: 1px solid $form-border-color;
+            cursor: pointer;
 
             .icon {
                 float: right;
                 margin-top: 5px;
+                color: $base-font-color;
             }
 
-            a.icon {
-                color: $base-font-color;
-                &:hover {
+            &:hover  {
+                background-color: #ecf0f1;
+                .icon {
                     color: #2980b9;
                 }
             }
 
-            &.error {
-                text-align: center;
+            &:last-child {
+                border-bottom: none;
             }
         }
     }

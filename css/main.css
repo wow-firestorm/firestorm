@@ -35,8 +35,6 @@ p {
 a {
   color: #477dca;
   text-decoration: none; }
-  a:hover {
-    text-decoration: underline; }
   a:active, a:focus {
     color: #2c5999;
     outline: none; }
@@ -230,16 +228,18 @@ dl {
     overflow-y: auto; }
     #search .results li {
       padding: 5px 10px;
-      border-bottom: 1px solid #2c3e50; }
+      border-bottom: 1px solid #2c3e50;
+      cursor: pointer; }
       #search .results li .icon {
         float: right;
-        margin-top: 5px; }
-      #search .results li a.icon {
+        margin-top: 5px;
         color: #333333; }
-        #search .results li a.icon:hover {
+      #search .results li:hover {
+        background-color: #ecf0f1; }
+        #search .results li:hover .icon {
           color: #2980b9; }
-      #search .results li.error {
-        text-align: center; }
+      #search .results li:last-child {
+        border-bottom: none; }
 
 #settings {
   position: absolute;
@@ -271,7 +271,7 @@ dl {
 
 #addons {
   position: absolute;
-  top: 60px;
+  top: 100px;
   left: 40px;
   right: 40px;
   bottom: 110px; }
@@ -287,6 +287,8 @@ dl {
       #addons ul li .controls {
         display: inline-block;
         float: right; }
+        #addons ul li .controls .fa-spin {
+          margin-top: 5px; }
   #addons .all {
     text-align: right;
     padding-right: 10px; }

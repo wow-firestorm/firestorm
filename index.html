@@ -18,29 +18,19 @@
                              }"></i>
             </a>
             <form data-bind="submit: search">
-                <input type="text" data-bind="value: query" />
+                <input type="text" data-bind="value: query, hasFocus: focus, event: {keyup: on_keyup}" />
             </form>
             <ul class="results"
-                data-bind="visible: results().length > 0 || error()">
+                data-bind="visible: show">
                 <!-- ko foreach: results -->
-                <li>
-                    <a href="#" class="name" data-bind="text: name"></a>
-                    <a href="#" class="icon button download"
-                       data-bind="visible: !busy(),
-                                  click: $root.download">
+                <li data-bind="event: {mousedown: $parent.download}">
+                    <a href="#" class="name"
+                       data-bind="text: name"></a>
+                    <a href="#" class="icon button download">
                         <i class="fa fa-download fa-lg fa-fw"></i>
-                    </a>
-                    <i class="icon fa fa-spinner fa-spin fa-lg fa-fw"
-                       data-bind="visible: busy"></i>
-                    <a href="#" class="icon button error"
-                       data-bind="visible: error">
-                        <i class="fa fa-exclamation-circle fa-lg fa-fw"></i>
                     </a>
                 </li>
                 <!-- /ko -->
-                <li class="error" data-bind="visible: error() === 400">
-                    -- Cannot download --
-                </li>
             </ul>
         </div>
         <div id="settings">
@@ -67,35 +57,38 @@
         </div>
         <div id="addons">
             <div class="all">
-                <a href="#" class="button download"><i class="fa fa-download fa-lg fa-fw"></i></a>
-                <a href="#" class="button refresh"><i class="fa fa-refresh fa-lg fa-fw fa-spin"></i></a>
+                <a href="#" class="button download" data-bind="visible: downloadable">
+                    <i class="fa fa-download fa-lg fa-fw"></i>
+                </a>
+                <a href="#" class="button refresh"
+                   data-bind="click: refresh">
+                    <i data-bind="attr: {
+                        class: (refreshing()) ? 'fa fa-refresh fa-lg fa-fw fa-spin' : 'fa fa-refresh fa-lg fa-fw'
+                    }"></i>
+                </a>
             </div>
-            <ul>
+            <ul data-bind="foreach: addons">
                 <li>
-                    <a href="#">WeakAuras</a>
+                    <a href="#" data-bind="text: name"></a>
                     <div class="controls">
-                        <i class="fa fa-spinner fa-spin fa-lg fa-fw"></i>
-                        <a href="#" class="button download"><i class="fa fa-download fa-lg fa-fw"></i></a>
-                        <a href="#" class="button refresh"><i class="fa fa-refresh fa-lg fa-fw"></i></a>
-                        <a href="#" class="button delete"><i class="fa fa-trash-o fa-lg fa-fw"></i></a>
-                    </div>
-                </li>
-                <li>
-                    <a href="#">GTFO</a>
-                    <div class="controls">
-                        <i class="fa fa-spinner fa-spin fa-lg fa-fw"></i>
-                        <a href="#" class="button download"><i class="fa fa-download fa-lg fa-fw"></i></a>
-                        <a href="#" class="button refresh"><i class="fa fa-refresh fa-lg fa-fw"></i></a>
-                        <a href="#" class="button delete"><i class="fa fa-trash-o fa-lg fa-fw"></i></a>
-                    </div>
-                </li>
-                <li>
-                    <a href="#">ElvUI</a>
-                    <div class="controls">
-                        <i class="fa fa-spinner fa-spin fa-lg fa-fw"></i>
-                        <a href="#" class="button download"><i class="fa fa-download fa-lg fa-fw"></i></a>
-                        <a href="#" class="button refresh"><i class="fa fa-refresh fa-lg fa-fw"></i></a>
-                        <a href="#" class="button delete"><i class="fa fa-trash-o fa-lg fa-fw"></i></a>
+                        <i data-bind="visible: downloading"
+                           class="fa fa-spinner fa-spin fa-lg fa-fw"></i>
+                        <a href="#" class="button download"
+                           data-bind="visible: downloadable() && !refreshing() && !downloading(),
+                                      click: download">
+                            <i class="fa fa-download fa-lg fa-fw"></i>
+                        </a>
+                        <a href="#" class="button refresh"
+                           data-bind="click: refresh, visible: !downloading()">
+                            <i data-bind="attr: {
+                                class: (refreshing()) ? 'fa fa-refresh fa-lg fa-fw fa-spin' : 'fa fa-refresh fa-lg fa-fw'
+                            }"></i>
+                        </a>
+                        <a href="#" class="button delete"
+                           data-bind="visible: !refreshing() && !downloading(),
+                                      click: $parent.remove_addon">
+                            <i class="fa fa-trash-o fa-lg fa-fw"></i>
+                        </a>
                     </div>
                 </li>
             </ul>
