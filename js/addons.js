@@ -10,7 +10,7 @@ function Repo(g, details, callback) {
     self.downloading = ko.observable(false);
     self.downloadable = ko.observable(false);
     self.refreshing = ko.observable(false);
-    self.addons = [];
+    self.addons = ko.observableArray();
     self.g = g;
     self.name = details.name;
     self.path = details.path;
@@ -18,12 +18,65 @@ function Repo(g, details, callback) {
 
     self.refresh = function() {
         self.refreshing(true);
-        setTimeout(function() {self.refreshing(false);}, 2000);
+        switch (self.type) {
+            case "git":
+                self.git_refresh();
+                break;
+        }
     };
+
+    self.git_refresh = function() {
+        var options = {cwd: self.path};
+        var cmd = self.g.settings.git() + " remote update";
+        exec(cmd, options, function(error, stdout, stderr) {
+            if (error) {
+                console.error("Couldn't remote update git repo");
+                console.error(error, stdout, stderr);
+                self.refreshing(false);
+            } else {
+                cmd = self.g.settings.git() + " rev-list HEAD...origin/master --count";
+                exec(cmd, options, function(error, stdout, stderr) {
+                    if (error) {
+                        console.error("Couldn't get change count");
+                        console.error(error, stdout, stderr);
+                    } else {
+                        var count = parseInt(stdout);
+                        if (count) {
+                            self.downloadable(true);
+                        }
+                    }
+                    self.refreshing(false);
+                });
+            }
+        });
+    };
+
     self.download = function() {
         self.downloading(true);
-        setTimeout(function() {self.downloading(false);}, 2000);
+        switch (self.type) {
+            case "git":
+                self.git_download();
+                break;
+        }
     };
+
+    self.git_download = function() {
+        var options = {cwd: self.path};
+        var cmd = self.g.settings.git() + " pull";
+        exec(cmd, options, function(error, stdout, stderr) {
+            if (error) {
+                console.error("Couldn't pull git repo");
+                console.error(error, stdout, stderr);
+            } else {
+                self.addons([]);
+                self.dive(self.path, function(a) {
+                    a.install();
+                });
+            }
+            self.downloading(false);
+        });
+    };
+
     self.delete = function() {
         rmdir(self.path, function(err) {
             if (err) {
@@ -94,7 +147,8 @@ function Addon(g, name, p, repo) {
     self.download = self.repo.download;
 
     self.install = function() {
-        var dest = path.join(g.settings.wow(), 'Interface', 'Addons', name);
+        var dest = path.join(self.g.settings.wow(),
+            'Interface', 'Addons', name);
         ncp(self.path, dest, function (err) {
             if (err) {
                 return console.error(err);
@@ -108,7 +162,13 @@ function AddonsViewModel(g) {
     var self = this;
     self.g = g;
 
+    self.repos = ko.observableArray();
     self.addons = ko.observableArray();
+    ko.computed(function() {
+        self.addons(_.reduce(self.repos(), function(addons, r) {
+            return addons.concat(r.addons());
+        }, []));
+    });
 
     self.refreshing = ko.computed(function() {
         for (var i=0; i<self.addons().length; i++) {
@@ -126,10 +186,6 @@ function AddonsViewModel(g) {
         }
         return false;
     });
-
-    self.add_addon = function(a) {
-        self.addons.push(a);
-    };
 
     self.remove_addon = function(a) {
         var answer = confirm("Remove " + a.repo.name + "?");
@@ -153,9 +209,10 @@ function AddonsViewModel(g) {
     };
 
     self.reload = function() {
+        self.repos([]);
         for (var i=0; i<self.g.db.repos.length; i++) {
             var details = self.g.db.repos[i];
-            new Repo(self.g, details, self.add_addon);
+            self.repos.push(new Repo(self.g, details, _.identity));
         }
     };
 
@@ -185,10 +242,9 @@ function AddonsViewModel(g) {
                             details.name.replace(/\.git$/, "")
                         );
                         self.g.db.repos.push(details);
-                        new Repo(self.g, details, function(a) {
-                            self.add_addon(a);
+                        self.repos.push(new Repo(self.g, details, function(a) {
                             a.install();
-                        });
+                        }));
                     }
                 });
             }

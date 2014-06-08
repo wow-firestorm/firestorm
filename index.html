@@ -61,7 +61,7 @@
                     <i class="fa fa-download fa-lg fa-fw"></i>
                 </a>
                 <a href="#" class="button refresh"
-                   data-bind="click: refresh">
+                   data-bind="click: refresh, visible: addons().length">
                     <i data-bind="attr: {
                         class: (refreshing()) ? 'fa fa-refresh fa-lg fa-fw fa-spin' : 'fa fa-refresh fa-lg fa-fw'
                     }"></i>

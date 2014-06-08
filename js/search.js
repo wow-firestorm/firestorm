@@ -2,7 +2,7 @@ var mkdirp = require('mkdirp');
 var path = require('path');
 var exec = require('child_process').exec;
 var request = require('request');
-var parse_url = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
+
 
 function SearchViewModel(g) {
     var self = this;
@@ -32,7 +32,7 @@ function SearchViewModel(g) {
             if (error) {
                 self.probe_svn(url, discovered, done);
             } else {
-                var name = parse_url.exec(url)[5].split('/').pop();
+                var name = url.split('/').pop();
                 discovered({
                     type: 'git',
                     name: name,
