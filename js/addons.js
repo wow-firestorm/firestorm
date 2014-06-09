@@ -2,6 +2,7 @@ var ncp = require('ncp').ncp;
 var fs = require("fs");
 var path = require("path");
 var rmdir = require("rimraf");
+var uuid = require("node-uuid");
 
 
 function Repo(g, details, callback) {
@@ -68,23 +69,30 @@ function Repo(g, details, callback) {
                 console.error("Couldn't pull git repo");
                 console.error(error, stdout, stderr);
             } else {
+                self.delete_addons();
                 self.addons([]);
                 self.dive(self.path, function(a) {
                     a.install();
                 });
+                self.downloadable(false);
             }
             self.downloading(false);
         });
     };
 
-    self.delete = function() {
+    self.delete = function(cb) {
         rmdir(self.path, function(err) {
             if (err) {
                 console.error("Could not delete repo");
                 console.error(err);
             }
+            cb();
         });
-        self.addons.forEach(function(a) {
+        self.delete_addons();
+    };
+
+    self.delete_addons = function() {
+        self.addons().forEach(function(a) {
             rmdir(
                 path.join(g.settings.wow(), 'Interface', 'Addons', a.name),
                 function(err) {
@@ -186,24 +194,28 @@ function AddonsViewModel(g) {
         }
         return false;
     });
+    self.downloading = ko.computed(function() {
+        return _.reduce(self.addons(), function(value, addon) {
+            return value || addon.downloading();
+        }, false);
+    });
 
     self.remove_addon = function(a) {
         var answer = confirm("Remove " + a.repo.name + "?");
         if (answer) {
-            a.repo.delete();
-            a.repo.addons.forEach(function(b) {
-                self.addons.remove(b);
-            });
             self.g.db.repos = _.filter(self.g.db.repos, function(r) {
                 return r.name !== a.repo.name;
             });
+            a.repo.delete(self.reload);
         }
     };
 
     self.add_repo = function(details) {
+        var id = uuid.v1();
+        details.id = id;
         switch (details.type) {
             case 'git':
-                self.git_clone(details);
+                self.git_clone(details, id);
                 break;
         }
     };
@@ -222,7 +234,15 @@ function AddonsViewModel(g) {
         }
     };
 
-    self.git_clone = function(details) {
+    self.download = function() {
+        self.repos().forEach(function(r) {
+            if (r.downloadable()) {
+                r.download();
+            }
+        });
+    };
+
+    self.git_clone = function(details, id) {
         var options = {cwd: path.join(self.g.settings.fs(), 'addons')};
         mkdirp(options.cwd, function(err) {
             if (err) {
@@ -230,7 +250,7 @@ function AddonsViewModel(g) {
                 console.error(options.cwd);
             }
             else {
-                var cmd = self.g.settings.git() + " clone " + details.url;
+                var cmd = self.g.settings.git() + " clone " + details.url + " " + id;
                 exec(cmd, options, function(error, stdout, stderr) {
                     if (error) {
                         console.error("Couldn't clone git repo");
@@ -239,7 +259,7 @@ function AddonsViewModel(g) {
                         details.path = path.join(
                             self.g.settings.fs(),
                             'addons',
-                            details.name.replace(/\.git$/, "")
+                            details.id
                         );
                         self.g.db.repos.push(details);
                         self.repos.push(new Repo(self.g, details, function(a) {

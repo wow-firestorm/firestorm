@@ -56,37 +56,59 @@
             </div>
         </div>
         <div id="addons">
-            <div class="all">
-                <a href="#" class="button download" data-bind="visible: downloadable">
-                    <i class="fa fa-download fa-lg fa-fw"></i>
+            <div class="controls">
+                <a href="#" class="button download"
+                   data-bind="click: download, style: {
+                       visibility: (downloadable() && !refreshing()) ?
+                           'visible' : 'hidden'
+                   }">
+                    <i class="fa fa-lg fa-fw"
+                       data-bind="css: {
+                           'fa-spinner fa-spin': downloading,
+                           'fa-download': !downloading()
+                       }"></i>
                 </a>
                 <a href="#" class="button refresh"
-                   data-bind="click: refresh, visible: addons().length">
-                    <i data-bind="attr: {
-                        class: (refreshing()) ? 'fa fa-refresh fa-lg fa-fw fa-spin' : 'fa fa-refresh fa-lg fa-fw'
-                    }"></i>
+                   data-bind="click: refresh, style: {
+                       visibility: (addons().length > 0 && !downloading()) ?
+                           'visible' : 'hidden'
+                   }">
+                    <i class="fa fa-refresh fa-lg fa-fw"
+                       data-bind="css: {
+                         'fa-spin': refreshing
+                       }"></i>
                 </a>
             </div>
             <ul data-bind="foreach: addons">
                 <li>
-                    <a href="#" data-bind="text: name"></a>
+                    <span data-bind="text: name"></span>
                     <div class="controls">
-                        <i data-bind="visible: downloading"
-                           class="fa fa-spinner fa-spin fa-lg fa-fw"></i>
                         <a href="#" class="button download"
-                           data-bind="visible: downloadable() && !refreshing() && !downloading(),
-                                      click: download">
-                            <i class="fa fa-download fa-lg fa-fw"></i>
+                           data-bind="click: download, style: {
+                               visibility: (downloadable() && !refreshing()) ?
+                                   'visible' : 'hidden'
+                           }">
+                            <i class="fa fa-lg fa-fw"
+                               data-bind="css: {
+                                   'fa-spinner fa-spin': downloading,
+                                   'fa-download': !downloading()
+                               }"></i>
                         </a>
                         <a href="#" class="button refresh"
-                           data-bind="click: refresh, visible: !downloading()">
-                            <i data-bind="attr: {
-                                class: (refreshing()) ? 'fa fa-refresh fa-lg fa-fw fa-spin' : 'fa fa-refresh fa-lg fa-fw'
-                            }"></i>
+                           data-bind="click: refresh, style: {
+                               visibility: (!downloading()) ?
+                                   'visible' : 'hidden'
+                           }">
+                            <i class="fa fa-refresh fa-lg fa-fw"
+                               data-bind="css: {
+                                 'fa-spin': refreshing
+                               }"></i>
                         </a>
                         <a href="#" class="button delete"
-                           data-bind="visible: !refreshing() && !downloading(),
-                                      click: $parent.remove_addon">
+                           data-bind="click: $parent.remove_addon, style: {
+                               visibility: (!downloading() && !refreshing()) ?
+                                   'visible' : 'hidden'
+                           }">
                             <i class="fa fa-trash-o fa-lg fa-fw"></i>
                         </a>
                     </div>

@@ -8,6 +8,7 @@
     "height": 500,
     "min_width": 625,
     "max_width": 625,
-    "min_height": 500
+    "min_height": 500,
+    "fullscreen": false
   }
 }
