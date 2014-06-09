@@ -3,6 +3,8 @@ var fs = require("fs");
 var path = require("path");
 var rmdir = require("rimraf");
 var uuid = require("node-uuid");
+var request = require('request');
+var AdmZip = require('adm-zip');
 
 
 function Repo(g, details, callback) {
@@ -13,21 +15,22 @@ function Repo(g, details, callback) {
     self.refreshing = ko.observable(false);
     self.addons = ko.observableArray();
     self.g = g;
-    self.name = details.name;
-    self.path = details.path;
-    self.type = details.type;
+    self.details = details;
 
     self.refresh = function() {
         self.refreshing(true);
-        switch (self.type) {
+        switch (self.details.type) {
             case "git":
                 self.git_refresh();
+                break;
+            case "curse":
+                self.curse_refresh();
                 break;
         }
     };
 
     self.git_refresh = function() {
-        var options = {cwd: self.path};
+        var options = {cwd: self.details.path};
         var cmd = self.g.settings.git() + " remote update";
         exec(cmd, options, function(error, stdout, stderr) {
             if (error) {
@@ -52,17 +55,41 @@ function Repo(g, details, callback) {
         });
     };
 
+    self.curse_refresh = function() {
+        var url = self.details.url + "/download";
+        request(url, function (error, response, body) {
+            if (error || response.statusCode !== 200) {
+                console.error("Could not download Curse project page");
+                console.error(error, response, body);
+            } else {
+                var m = /data-href="([^"]*)"/.exec(body);
+                if (m === null) {
+                    console.error("Could not find data-href in Curse download");
+                    console.error(response, body, m);
+                } else {
+                    var vrl = m[1];
+                    self.downloadable(vrl !== self.details.vrl);
+                    self.details.vrl = vrl;
+                }
+            }
+            self.refreshing(false);
+        });
+    };
+
     self.download = function() {
         self.downloading(true);
-        switch (self.type) {
+        switch (self.details.type) {
             case "git":
                 self.git_download();
+                break;
+            case "curse":
+                self.curse_download();
                 break;
         }
     };
 
     self.git_download = function() {
-        var options = {cwd: self.path};
+        var options = {cwd: self.details.path};
         var cmd = self.g.settings.git() + " pull";
         exec(cmd, options, function(error, stdout, stderr) {
             if (error) {
@@ -71,7 +98,7 @@ function Repo(g, details, callback) {
             } else {
                 self.delete_addons();
                 self.addons([]);
-                self.dive(self.path, function(a) {
+                self.dive(self.details.path, function(a) {
                     a.install();
                 });
                 self.downloadable(false);
@@ -80,8 +107,38 @@ function Repo(g, details, callback) {
         });
     };
 
+    self.curse_download = function() {
+        if (/\.zip$/.test(self.details.vrl)) {
+            var pp = path.join(self.details.path, 'fs.compressed.zip');
+            var ws = fs.createWriteStream(pp);
+            ws.on("finish", function() {
+                var zip = new AdmZip(pp);
+                zip.extractAllTo(self.details.path, true);
+                self.delete_addons();
+                self.addons([]);
+                self.dive(self.details.path, function(a) {
+                    a.install();
+                });
+                self.downloadable(false);
+                self.downloading(false);
+            });
+            request(self.details.vrl, function(error, response, body) {
+                if (error) {
+                    console.error("Could not download compressed addon from Curse");
+                    console.error(error, response, body);
+                    self.downloadable(false);
+                    self.downloading(false);
+                }
+            }).pipe(ws);
+        } else {
+            console.error("This isn't a zip file");
+            self.downloadable(false);
+            self.downloading(false);
+        }
+    };
+
     self.delete = function(cb) {
-        rmdir(self.path, function(err) {
+        rmdir(self.details.path, function(err) {
             if (err) {
                 console.error("Could not delete repo");
                 console.error(err);
@@ -201,10 +258,10 @@ function AddonsViewModel(g) {
     });
 
     self.remove_addon = function(a) {
-        var answer = confirm("Remove " + a.repo.name + "?");
+        var answer = confirm("Remove " + a.repo.details.name + "?");
         if (answer) {
             self.g.db.repos = _.filter(self.g.db.repos, function(r) {
-                return r.name !== a.repo.name;
+                return r.name !== a.repo.details.name;
             });
             a.repo.delete(self.reload);
         }
@@ -215,7 +272,10 @@ function AddonsViewModel(g) {
         details.id = id;
         switch (details.type) {
             case 'git':
-                self.git_clone(details, id);
+                self.git_clone(details);
+                break;
+            case "curse":
+                self.curse_download(details);
                 break;
         }
     };
@@ -242,7 +302,7 @@ function AddonsViewModel(g) {
         });
     };
 
-    self.git_clone = function(details, id) {
+    self.git_clone = function(details) {
         var options = {cwd: path.join(self.g.settings.fs(), 'addons')};
         mkdirp(options.cwd, function(err) {
             if (err) {
@@ -250,7 +310,7 @@ function AddonsViewModel(g) {
                 console.error(options.cwd);
             }
             else {
-                var cmd = self.g.settings.git() + " clone " + details.url + " " + id;
+                var cmd = self.g.settings.git() + " clone " + details.url + " " + details.id;
                 exec(cmd, options, function(error, stdout, stderr) {
                     if (error) {
                         console.error("Couldn't clone git repo");
@@ -267,6 +327,57 @@ function AddonsViewModel(g) {
                         }));
                     }
                 });
+            }
+        });
+    };
+
+    self.curse_download = function(details) {
+        var url = details.url + "/download";
+        request(url, function (error, response, body) {
+            if (error || response.statusCode !== 200) {
+                console.error("Could not download Curse project page");
+                console.error(error, response, body);
+            } else {
+                var m = /data-href="([^"]*)"/.exec(body);
+                if (m === null) {
+                    console.error("Could not find data-href in Curse download");
+                    console.error(response, body, m);
+                } else {
+                    var p = path.join(
+                        self.g.settings.fs(), 'addons', details.id);
+                    details.path = p;
+                    mkdirp(p, function(err) {
+                        if (err) {
+                            console.error("Couldn't make addon directory");
+                            console.error(p);
+                        } else {
+                            var vrl = m[1];
+                            details.vrl = vrl;
+                            if (/\.zip$/.test(vrl)) {
+                                var pp = path.join(p, 'fs.compressed.zip');
+                                var ws = fs.createWriteStream(pp);
+                                ws.on("finish", function() {
+                                    var zip = new AdmZip(pp);
+                                    zip.extractAllTo(p);
+                                    self.g.db.repos.push(details);
+                                    self.repos.push(
+                                        new Repo(self.g, details, function(a) {
+                                            a.install();
+                                    }));
+
+                                });
+                                request(vrl, function(error, response, body) {
+                                    if (error) {
+                                        console.error("Could not download compressed addon from Curse");
+                                        console.error(error, response, body);
+                                    }
+                                }).pipe(ws);
+                            } else {
+                                console.error("This isn't a zip file");
+                            }
+                        }
+                    });
+                }
             }
         });
     };

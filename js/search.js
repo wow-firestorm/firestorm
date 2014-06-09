@@ -30,7 +30,7 @@ function SearchViewModel(g) {
         var cmd = g.settings.git() + " ls-remote " + url + " HEAD";
         exec(cmd, function(error, stdout, stderr) {
             if (error) {
-                self.probe_svn(url, discovered, done);
+                self.probe_hg(url, discovered, done);
             } else {
                 var name = url.split('/').pop();
                 discovered({
@@ -44,8 +44,26 @@ function SearchViewModel(g) {
         });
     };
 
+    self.probe_hg = function(url, discovered, done) {
+        self.probe_svn(url, discovered, done);
+    };
+
     self.probe_svn = function(url, discovered, done) {
-        self.probe_file(url, discovered, done);
+        self.probe_curse(url, discovered, done);
+    };
+
+    self.probe_curse = function(url, discovered, done) {
+        var m = /^http:\/\/www\.curse\.com\/addons\/wow\/([^\/]*)(\/.*)?/.exec(url);
+        if (m !== null) {
+            discovered({
+                type: "curse",
+                name: m[1],
+                url: "http://www.curse.com/addons/wow/" + m[1]
+            });
+            done();
+        } else {
+            self.probe_file(url, discovered, done);
+        }
     };
 
     self.probe_file = function(url, discovered, done) {
