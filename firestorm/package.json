@@ -1,0 +1,14 @@
+{
+  "name": "firestorm",
+  "main": "index.html",
+  "window": {
+    "toolbar": true,
+    "resizable": true,
+    "width": 625,
+    "height": 500,
+    "min_width": 625,
+    "max_width": 625,
+    "min_height": 500,
+    "fullscreen": false
+  }
+}

@@ -1,0 +1,43 @@
+#addons {
+    position: absolute;
+    top: 70px;
+    left: 40px;
+    right: 40px;
+    bottom: 110px;
+
+    ul {
+        border: 1px solid $base-border-color;
+        height: 100%;
+        overflow-y: auto;
+        margin-top: 5px;
+
+        li {
+            border-bottom: 1px solid $base-border-color;
+            padding: 5px;
+            background-color: $addon-background-color;
+
+            .controls {
+                display: inline-block;
+                float: right;
+                padding-right: 0;
+            }
+        }
+    }
+
+    .controls {
+        text-align: right;
+        padding-right: 38px;
+    }
+
+    .button {
+        color: $base-font-color;
+
+        &:hover {
+            color: $button-hover-color;
+        }
+
+        &.delete:hover {
+            color: $delete-color;
+        }
+    }
+}
