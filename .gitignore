@@ -53,5 +53,5 @@ coverage.xml
 docs/_build/
 
 
-css/.sass-cache/
+.sass-cache/
 node_modules/
