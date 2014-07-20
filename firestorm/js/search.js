@@ -29,7 +29,7 @@ function SearchViewModel(g) {
         var cmd = g.settings.git() + " ls-remote " + url + " HEAD";
         exec(cmd, function(error, stdout, stderr) {
             if (error) {
-                self.probe_hg(url, discovered, done);
+                self.probe_curse(url, discovered, done);
             } else {
                 var name = url.split('/').pop();
                 discovered({
@@ -41,14 +41,6 @@ function SearchViewModel(g) {
                 done();
             }
         });
-    };
-
-    self.probe_hg = function(url, discovered, done) {
-        self.probe_svn(url, discovered, done);
-    };
-
-    self.probe_svn = function(url, discovered, done) {
-        self.probe_curse(url, discovered, done);
     };
 
     self.probe_curse = function(url, discovered, done) {

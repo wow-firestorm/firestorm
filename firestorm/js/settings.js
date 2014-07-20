@@ -13,15 +13,6 @@ function SettingsViewModel(g) {
         return "";
     };
 
-    self.get_svn = function() {
-        exec('which svn', function(error, stdout, stderr) {
-            if (stdout) {
-                self.svn(stdout.trim());
-            }
-        });
-        return "";
-    };
-
     self.toggle = function() {
         self.visible(!self.visible());
     };
@@ -37,7 +28,6 @@ function SettingsViewModel(g) {
         )
     );
     self.git = ko.observable(g.db.settings.git || self.get_git());
-    self.svn = ko.observable(g.db.settings.svn || self.get_svn());
 
     self.wow.subscribe(function(value) {
         g.db.settings.wow = value;
@@ -47,8 +37,5 @@ function SettingsViewModel(g) {
     });
     self.git.subscribe(function(value) {
         g.db.settings.git = value;
-    });
-    self.svn.subscribe(function(value) {
-        g.db.settings.svn = value;
     });
 }
