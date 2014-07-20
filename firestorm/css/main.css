@@ -187,8 +187,8 @@ dl {
   right: 0px;
   height: 2px; }
   #progress .bar {
-    background-color: #ad5758;
-    width: 50%;
+    background-color: #eb5240;
+    width: 0%;
     height: 2px; }
 
 #search {
@@ -249,7 +249,7 @@ dl {
     display: block;
     color: #333333; }
     #settings .open:hover {
-      color: #2980b9; }
+      color: #eb5240; }
   #settings .modal {
     position: fixed;
     top: 60px;
@@ -289,14 +289,13 @@ dl {
         float: right;
         padding-right: 0; }
   #addons .controls {
-    text-align: right;
-    padding-right: 38px; }
+    text-align: right; }
   #addons .button {
     color: #333333; }
     #addons .button:hover {
-      color: #46626d; }
+      color: #eb5240; }
     #addons .button.delete:hover {
-      color: #ad5758; }
+      color: #eb5240; }
 
 #footer {
   position: absolute;
