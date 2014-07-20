@@ -1,6 +1,5 @@
 var path = require('path');
 var exec = require('child_process').exec;
-var request = require('request');
 
 
 function SearchViewModel(g) {

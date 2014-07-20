@@ -114,22 +114,43 @@
         <div id="footer">
             <ul class="links">
                 <li>
-                    <a href="http://firestorm.williammayor.co.uk">website</a>
+                    <a href="http://firestorm.williammayor.co.uk" 
+                       data-bind="click: function() {open('http://firestorm.williammayor.co.uk');}">
+                        website
+                    </a>
                 </li>
                 <li>
-                    <a href="http://firestorm.williammayor.co.uk/support/">support</a>
+                    <a href="http://firestorm.williammayor.co.uk/support/" 
+                       data-bind="click: function() {
+                            open('http://firestorm.williammayor.co.uk/support/');
+                          }">
+                        support
+                    </a>
                 </li>
-                <li class="update"><a href="http://firestorm.williammayor.co.uk/download/">update</a></li>
+                <li data-bind="visible: updateavailable">
+                    <a href="http://firestorm.williammayor.co.uk/download/" 
+                       data-bind="click: function() {
+                            open('http://firestorm.williammayor.co.uk/download/');
+                          }">
+                        update
+                    </a>
+                </li>
             </ul>
             <div class="donate">
                 Like firestorm?
-                <a href="http://firestorm.williammayor.co.uk/donate/">Buy me a coffee.</a>
+                <a href="http://firestorm.williammayor.co.uk/donate/" 
+                   data-bind="click: function() {
+                        open('http://firestorm.williammayor.co.uk/donate/');
+                      }">
+                    Buy me a coffee
+                </a>.
             </div>
         </div>
         <script type="text/javascript" src="js/progress.js"></script>
         <script type="text/javascript" src="js/settings.js"></script>
         <script type="text/javascript" src="js/search.js"></script>
         <script type="text/javascript" src="js/addons.js"></script>
+        <script type="text/javascript" src="js/footer.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
     </body>
 </html>
