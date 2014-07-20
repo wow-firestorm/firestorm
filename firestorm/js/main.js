@@ -10,9 +10,29 @@ if (str === null) {
 } else {
     g.db = JSON.parse(str);
 }
+g.settings = new SettingsViewModel(g);
+
+var logStream = fs.createWriteStream(g.settings.fs() + '/fs_log.log', {flags: 'w'});
+var errStream = fs.createWriteStream(g.settings.fs() + '/fs_err.log', {flags: 'w'});
+
+console._log = console.log;
+console.log = function log() {
+    var a = [].slice.apply(arguments);
+    a.push("\n");
+    logStream.write(a.join("\n"));
+    console._log.apply(this, arguments);
+    return arguments;
+}
+console._error = console.error;
+console.error = function error() {
+    var a = [].slice.apply(arguments);
+    a.push("\n");
+    errStream.write(a.join("\n"));
+    console._error.apply(this, arguments);
+    return arguments;
+}
 
 g.progress = new ProgressViewModel(g);
-g.settings = new SettingsViewModel(g);
 g.search = new SearchViewModel(g);
 g.addons = new AddonsViewModel(g);
 g.footer = new FooterViewModel(g);
