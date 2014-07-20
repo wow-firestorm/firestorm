@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="css/main.css">
     </head>
     <body>
-        <div id="progress"><div class="bar"></div></div>
+        <div id="progress"><div class="bar" data-bind="style: {width: progress() + '%'}"></div></div>
         <div id="search">
             <a class="go"
                data-bind="attr: {href: (busy()) ? null : '#' },
@@ -49,10 +49,6 @@
                 <label>Git Location</label>
                 <span>Where's your Git binary?</span>
                 <input type="text" data-bind="value: git"/>
-
-                <label>SVN Location</label>
-                <span>Where's your SVN binary?</span>
-                <input type="text"data-bind="value: svn" />
             </div>
         </div>
         <div id="addons">
@@ -130,6 +126,7 @@
                 <a href="http://firestorm.williammayor.co.uk/donate/">Buy me a coffee.</a>
             </div>
         </div>
+        <script type="text/javascript" src="js/progress.js"></script>
         <script type="text/javascript" src="js/settings.js"></script>
         <script type="text/javascript" src="js/search.js"></script>
         <script type="text/javascript" src="js/addons.js"></script>
