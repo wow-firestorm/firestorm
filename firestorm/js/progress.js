@@ -9,8 +9,9 @@ function ProgressViewModel(g) {
     });
 
     self.start = function() {
-        var progress = 0;
+        var progress = 10;
         self.total(self.total() + 100);
+        self.current(self.current() + progress);
         return {
             update: function(pct) {
                 self.current(self.current() + pct - progress);
