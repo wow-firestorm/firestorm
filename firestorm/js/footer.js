@@ -14,12 +14,12 @@ function FooterViewModel(g) {
     };
 
     self.checkversion = function() {
-        request("https://raw.githubusercontent.com/WilliamMayor/firestorm/master/firestorm/version.txt", function (error, response, body) {
+        request("https://raw.githubusercontent.com/WilliamMayor/firestorm/master/version.txt", function (error, response, body) {
             if (error || response.statusCode !== 200) {
                 console.error("Could not get version from GitHub");
                 console.error(error, response, body);
             } else {
-                self.updateavailable(body === self.version);
+                self.updateavailable(body !== self.version);
             }
         });
     };
