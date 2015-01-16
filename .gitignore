@@ -9,7 +9,6 @@ __pycache__/
 .Python
 env/
 bin/
-build/
 develop-eggs/
 dist/
 eggs/
@@ -55,3 +54,5 @@ docs/_build/
 
 .sass-cache/
 node_modules/
+
+build/firestorm.app/
