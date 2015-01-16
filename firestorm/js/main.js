@@ -1,5 +1,6 @@
 var gui = require('nw.gui');
 var fs = require("fs");
+var mkdirp = require('mkdirp');
 
 var g = {};
 
@@ -12,6 +13,9 @@ if (str === null) {
     g.db = JSON.parse(str);
 }
 g.settings = new SettingsViewModel(g);
+mkdirp(g.settings.fs(), function(err) { 
+    // Not much we can do here, can't even log.
+});
 var logStream = fs.createWriteStream(g.settings.fs() + '/fs_log.log', {flags: 'w'});
 var errStream = fs.createWriteStream(g.settings.fs() + '/fs_err.log', {flags: 'w'});
 
