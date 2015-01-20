@@ -1,6 +1,7 @@
 {
   "name": "firestorm",
   "main": "index.html",
+  "version": "1.0.0",
   "window": {
     "toolbar": true,
     "resizable": true,
@@ -10,5 +11,11 @@
     "max_width": 625,
     "min_height": 500,
     "fullscreen": false
+  },
+  "dependencies": {
+    "mkdirp": "^0.5.0",
+    "ncp": "^1.0.1",
+    "node-uuid": "^1.4.2",
+    "request": "^2.51.0"
   }
 }
