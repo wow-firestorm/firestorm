@@ -13,9 +13,11 @@
     "fullscreen": false
   },
   "dependencies": {
+    "adm-zip": "^0.4.4",
     "mkdirp": "^0.5.0",
     "ncp": "^1.0.1",
     "node-uuid": "^1.4.2",
-    "request": "^2.51.0"
+    "request": "^2.51.0",
+    "wrench": "^1.5.8"
   }
 }
