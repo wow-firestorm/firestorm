@@ -18,8 +18,12 @@ mkdirp(g.settings.fs(), function() {
     // Not much we can do here, can't even log.
 });
 
-var logStream = fs.createWriteStream(g.settings.fs() + '/fs_log.log', {flags: 'w'});
-var errStream = fs.createWriteStream(g.settings.fs() + '/fs_err.log', {flags: 'w'});
+var logStream = fs.createWriteStream(g.settings.fs() + '/fs_log.log', {
+    flags: 'w'
+});
+var errStream = fs.createWriteStream(g.settings.fs() + '/fs_err.log', {
+    flags: 'w'
+});
 
 console._log = console.log;
 console.log = function log() {
@@ -52,9 +56,22 @@ ko.applyBindings(g.footer, document.getElementById('footer'));
 
 var win = gui.Window.get();
 
+if (process.platform === 'darwin') {
+    win = gui.Window.get();
+    var nativeMenuBar = new gui.Menu({
+        type: 'menubar'
+    });
+    try {
+        nativeMenuBar.createMacBuiltin('firestorm');
+        win.menu = nativeMenuBar;
+    } catch (ex) {
+        console.log(ex.message);
+    }
+}
+
 win.on('close', function() {
-  this.hide();
-  var str = JSON.stringify(g.db);
-  localStorage.setItem('db', str);
-  this.close(true);
+    this.hide();
+    var str = JSON.stringify(g.db);
+    localStorage.setItem('db', str);
+    this.close(true);
 });
