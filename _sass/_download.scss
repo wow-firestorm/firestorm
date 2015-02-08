@@ -1,0 +1,13 @@
+#download {
+    color: $light-text-color;
+    h2 {
+        font-size: 2em;
+        margin-bottom: 0;
+    }
+    a {
+        font-size: 1.5em;
+    }
+    .latest {
+        margin-bottom: 3 * $spacing-unit;
+    }
+}

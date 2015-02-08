@@ -1,23 +1,17 @@
 ---
-layout: default
 ---
-
-<div class="home">
-
-  <h1 class="page-heading">Posts</h1>
-
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>
-
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
-
-</div>
+<!DOCTYPE html>
+<html>
+    {% include head.html %}
+    <body>
+        <section id="top"><div class="content"><div class="wrapper">{% include top.html %}</div></div></section>
+        {% include header.html %}
+        <section id="features"><div class="content"><div class="wrapper">{% include features.html %}</div></div></section>
+        <section id="video"><div class="content"><div class="wrapper">{% include video.html %}</div></div></section>
+        <section id="download"><div class="content"><div class="wrapper">{% include download.html %}</div></div></section>
+        <section id="about"><div class="content"><div class="wrapper">{% include about.html %}</div></div></section>
+        <section id="donate"><div class="content"><div class="wrapper">{% include donate.html %}</div></div></section>
+        {% include footer.html %}
+        <script type="text/javascript" src="main.js"></script>
+    </body>
+</html>

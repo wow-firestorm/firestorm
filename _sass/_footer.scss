@@ -1,0 +1,13 @@
+footer {
+    padding: $spacing-unit / 2 $spacing-unit;
+    background-color: $dark-red;
+    border-bottom: 5px solid $background-color;
+    color: $background-color;
+    text-align: center;
+    img {
+        height: 50px;
+    }
+    .copyright {
+        font-size: small;
+    }
+}

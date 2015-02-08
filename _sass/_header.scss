@@ -1,0 +1,27 @@
+header {
+    padding: $spacing-unit / 2 $spacing-unit;
+    background-color: $dark-red;
+    border-bottom: 5px solid $background-color;
+    color: $background-color;
+    z-index: 998;
+    img {
+        height: 50px;
+    }
+    nav {
+        display: inline;
+        ul {
+            list-style-type: none;
+            display: inline;
+            li {
+                display: inline;
+                padding: 0 $spacing-unit;
+                a {
+                    color: $background-color;
+                    &:hover, &:visited {
+                        color: $background-color;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,11 @@
+#features {
+    color: $light-text-color;
+    text-align: center;
+    .feature {
+        width: 220px;
+        margin: 0 10px;
+        margin-bottom: $spacing-unit;
+        display: inline-block;
+        vertical-align: top;
+    }
+}
