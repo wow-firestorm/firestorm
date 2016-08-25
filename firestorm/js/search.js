@@ -43,12 +43,12 @@ function SearchViewModel(g) {
     };
 
     self.probe_curse = function(url, discovered, done) {
-        var m = /^http:\/\/www\.curse\.com\/addons\/wow\/([^\/]*)(\/.*)?/.exec(url);
+        var m = /^https:\/\/mods\.curse\.com\/addons\/wow\/([^\/]*)(\/.*)?/.exec(url);
         if (m !== null) {
             discovered({
                 type: "curse",
                 name: m[1],
-                url: "http://www.curse.com/addons/wow/" + m[1]
+                url: "http://mods.curse.com/addons/wow/" + m[1]
             });
             done();
         } else {
