@@ -48,7 +48,7 @@ function SearchViewModel(g) {
             discovered({
                 type: "curse",
                 name: m[1],
-                url: "http://mods.curse.com/addons/wow/" + m[1]
+                url: "https://mods.curse.com/addons/wow/" + m[1]
             });
             done();
         } else {
